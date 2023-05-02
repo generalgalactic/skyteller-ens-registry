@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Owned} from "solmate/auth/Owned.sol";
 
 import {IRegistrar} from "./IRegistrar.sol";
+import {*} from "./Errors.sol";
 
 // References:
 // - https://github.com/ensdomains/subdomain-registrar/blob/1ffde8a296a071358fd2811e51a9df2ffcd72616/contracts/SubdomainRegistrar.sol
@@ -17,6 +18,8 @@ contract ManagedRegistrar is IRegistrar, Owned {
     mapping(bytes32 => address) public subdomainToAddress;
 
     // TODO: Could change archived mapping to be a timestamp for expiration?
+
+    // XXX: In retrospect, Archived state can be managed offchain, so maybe worth removing it for gas savings?
 
     /// @notice Archived domains are locked and hidden.
     mapping(bytes32 => bool) public isArchived;
@@ -32,11 +35,14 @@ contract ManagedRegistrar is IRegistrar, Owned {
     /************************************/
     /*** onlyOwner external functions ***/
 
-    function add(bytes32 calldata subdomain, address addr) external onlyOwner {
-        require(!isArchived[subdomain], "ManagedRegistrar: subdomain is archived");
-        subdomainToAddress[subdomain] = addr;
+    /// @notice Add a subdomain -> addr mapping
+    /// @param node Namehash of the subdomain, in EIP-137 format
+    /// @param addr Ethereum address to map subdomain to
+    function add(bytes32 calldata node, address addr) external onlyOwner {
+        require(!isArchived[node], Archived());
+        subdomainToAddress[node] = addr;
 
-        emit Register(subdomain, addr);
+        emit AddrChanged(node, addr);
     }
 
     function addBulk(bytes32[] calldata subdomains, address[] calldata addrs) external onlyOwner {
@@ -53,6 +59,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
         isArchived[subdomain] = true;
 
         emit Archive(subdomain);
+        emit AddrChanged(node, address(0));
     }
 
     /// @notice Deletes a subdomain (even if it's archived), should generally use archive instead (to avoid hijacking)
@@ -60,9 +67,15 @@ contract ManagedRegistrar is IRegistrar, Owned {
         delete subdomainToAddress[subdomain];
         delete isArchived[subdomain];
 
-        emit Delete(subdomain);
+        emit AddrChanged(node, address(0));
     }
 
     /*********************************/
     /*** public external functions ***/
+
+    function addr(bytes32 nodeID) external view returns (address) {
+        if (isArchived[nodeID]) return address(0);
+
+        return subdomainToAddress[nodeId];
+    }
 }
