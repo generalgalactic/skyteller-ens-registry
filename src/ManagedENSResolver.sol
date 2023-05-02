@@ -4,14 +4,11 @@ pragma solidity ^0.8.13;
 import {Owned} from "solmate/auth/Owned.sol";
 
 import {IRegistrar} from "./IRegistrar.sol";
+import {IResolver} from "./IResolver.sol";
 
 // References:
 // - https://github.com/ensdomains/resolvers/blob/master/contracts/profiles/AddrResolver.sol
 // - https://eips.ethereum.org/EIPS/eip-137#appendix-b-sample-resolver-implementations
-
-interface IResolver {
-    function addr(bytes32 node) constant returns (address);
-}
 
 contract ManagedENSResolver is IResolver, Owned {
     // FIXME: Do we want this resolver to support other functions for the parent node?
@@ -33,12 +30,12 @@ contract ManagedENSResolver is IResolver, Owned {
     }
 
     function addr(bytes32 nodeID) external view returns (address) {
-        return registrar.
+        return registrar.addr(nodeID);
     }
 
     // Per Resolver specification: https://eips.ethereum.org/EIPS/eip-137#resolver-specification
     // "Resolvers MUST specify a fallback function that throws."
-    function() {
-        throw;
+    fallback() external {
+        revert();
     }
 }

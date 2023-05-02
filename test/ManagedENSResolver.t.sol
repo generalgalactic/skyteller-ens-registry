@@ -7,9 +7,11 @@ import "../src/ManagedRegistrar.sol";
 
 contract ManagedENSResolverTest is Test {
     ManagedENSResolver public resolver;
+    ManagedRegistrar public registrar;
 
     function setUp() public {
-        resolver = new ManagedENSResolver();
+        registrar = new ManagedRegistrar();
+        resolver = new ManagedENSResolver(registrar);
     }
 
     function testResolve() public {
