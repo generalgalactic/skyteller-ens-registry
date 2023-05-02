@@ -14,12 +14,12 @@ import {IRegistrar} from "./IRegistrar.sol";
 /// (which has all of the mappings)
 contract ManagedRegistrar is IRegistrar, Owned {
     /// @notice Mapping of subdomain to address
-    mapping(string => address) public subdomainToAddress;
+    mapping(bytes32 => address) public subdomainToAddress;
 
     // TODO: Could change archived mapping to be a timestamp for expiration?
 
     /// @notice Archived domains are locked and hidden.
-    mapping(string => bool) public isArchived;
+    mapping(bytes32 => bool) public isArchived;
 
     // TODO: addressToName for reverse resolver?
 
@@ -32,7 +32,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
     /************************************/
     /*** onlyOwner external functions ***/
 
-    function add(string calldata subdomain, address addr) external onlyOwner {
+    function add(bytes32 calldata subdomain, address addr) external onlyOwner {
         require(!isArchived[subdomain], "ManagedRegistrar: subdomain is archived");
         subdomainToAddress[subdomain] = addr;
 
@@ -42,7 +42,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
     // TODO: addBulk
 
     // TODO: archive - Lock and hide name from listing
-    function archive(string calldata subdomain) external onlyOwner {
+    function archive(bytes32 calldata subdomain) external onlyOwner {
         isArchived[subdomain] = true;
 
         emit Archive(subdomain);
@@ -50,7 +50,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
 
     // TODO: delete
     /// @notice Deletes a subdomain (even if it's archived), should generally use archive instead (to avoid hijacking)
-    function delete(string calldata subdomain) external onlyOwner {
+    function delete(bytes32 calldata subdomain) external onlyOwner {
         delete subdomainToAddress[subdomain];
         delete isArchived[subdomain];
 

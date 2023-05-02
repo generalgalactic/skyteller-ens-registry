@@ -4,14 +4,14 @@ pragma solidity ^0.8.13;
 interface IRegistrar {
     event Register(
         string subdomain,
-        address address,
+        bytes32 address,
     );
 
     event Archive(
-        string subdomain,
+        bytes32 subdomain,
     );
 
     event Delete(
-        string subdomain,
+        bytes32 subdomain,
     );
 }
