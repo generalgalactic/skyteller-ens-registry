@@ -39,7 +39,14 @@ contract ManagedRegistrar is IRegistrar, Owned {
         emit Register(subdomain, addr);
     }
 
-    // TODO: addBulk
+    function addBulk(bytes32[] calldata subdomains, address[] calldata addrs) external onlyOwner {
+        require(subdomains.length == addrs.length, BulkLengthMismatch());
+
+        for (uint256 i = 0; i < subdomains.length; i++) {
+            // TODO: Could do some micro-optimizations for bulk adding
+            add(subdomains[i], addrs[i]);
+        }
+    }
 
     // TODO: archive - Lock and hide name from listing
     function archive(bytes32 calldata subdomain) external onlyOwner {
@@ -48,9 +55,8 @@ contract ManagedRegistrar is IRegistrar, Owned {
         emit Archive(subdomain);
     }
 
-    // TODO: delete
     /// @notice Deletes a subdomain (even if it's archived), should generally use archive instead (to avoid hijacking)
-    function delete(bytes32 calldata subdomain) external onlyOwner {
+    function remove(bytes32 calldata subdomain) external onlyOwner {
         delete subdomainToAddress[subdomain];
         delete isArchived[subdomain];
 
