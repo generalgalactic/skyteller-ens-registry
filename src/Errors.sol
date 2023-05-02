@@ -2,4 +2,4 @@
 pragma solidity ^0.8.13;
 
 // Registrar
-error Archived();
+error LengthMismatch();

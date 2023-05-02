@@ -8,8 +8,4 @@ interface IRegistrar {
         bytes32 indexed node,
         address a,
     );
-
-    event Archive(
-        bytes32 indexed node,
-    );
 }
