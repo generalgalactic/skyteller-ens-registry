@@ -1,5 +1,5 @@
 test:
-	forge test
+	forge test --offline
 
 build:
 	forge build
