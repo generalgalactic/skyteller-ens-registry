@@ -10,6 +10,10 @@ import {IResolver} from "./IResolver.sol";
 // - https://github.com/ensdomains/resolvers/blob/master/contracts/profiles/AddrResolver.sol
 // - https://eips.ethereum.org/EIPS/eip-137#appendix-b-sample-resolver-implementations
 
+/// @notice ManagedENSResolver is a wrapper around a ManagedRegistrar which
+/// maintains the stored state of subdomain node-to-address mappings.
+/// @dev ManagedENSResolver can be replaced to add functionality without losing
+/// mapping state that is stored in the ManagedRegistrar.
 contract ManagedENSResolver is IResolver, Owned {
     // FIXME: Do we want this resolver to support other functions for the parent node?
 
