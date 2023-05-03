@@ -14,6 +14,10 @@ contract ManagedRegistrarTest is Test {
 
     function testOwner() public {
         assertEq(registrar.owner(), address(this));
+
+        vm.prank(address(0x42));
+        vm.expectRevert("UNAUTHORIZED");
+        registrar.set(bytes32(abi.encodePacked("a")), address(0x42));
     }
 
     function testSet() public {
@@ -22,9 +26,11 @@ contract ManagedRegistrarTest is Test {
         registrar.set(node, want);
         assertEq(registrar.addr(node), want);
 
-        assertEq(registrar.addr(bytes32(abi.encodePacked("defg"))), address(0));
+        // Invalid nodes return 0x0
+        assertEq(registrar.addr(bytes32(abi.encodePacked("defg"))), address(0x0));
     }
 
     function testMultiset() public {
+        // TODO: ...
     }
 }
