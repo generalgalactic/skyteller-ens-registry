@@ -26,7 +26,7 @@ contract ManagedENSResolverTest is Test {
         resolver = new ManagedENSResolver(registrar);
     }
 
-    function testNamehash() public {
+    function test_Namehash() public {
         // Just making sure it works correctly
         bytes32 got = Helpers.nodehash("eth");
         bytes32 want = 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
@@ -34,7 +34,7 @@ contract ManagedENSResolverTest is Test {
         assertEq(got, want);
     }
 
-    function testResolve() public {
+    function test_Resolve() public {
         bytes32 name = Helpers.nodehash("hello");
         address addr = address(0x42);
 
