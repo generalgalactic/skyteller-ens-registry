@@ -6,10 +6,10 @@ import "forge-std/Script.sol";
 import "../src/ManagedENSResolver.sol";
 import "../src/ManagedRegistrar.sol";
 
-contract ManagedENSResolverScript is Script {
+contract Deploy is Script {
     function run() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address ownerAddress = vm.envAddress("OWNER_ADDRESS");
+        uint256 deployerPrivateKey = vm.envUint("ETH_PRIVATE_KEY");
+        address ownerAddress = vm.envAddress("ETH_OWNER_ADDRESS");
 
         vm.startBroadcast(deployerPrivateKey);
 
@@ -17,6 +17,7 @@ contract ManagedENSResolverScript is Script {
         ManagedENSResolver resolver = new ManagedENSResolver(registrar);
 
         if (ownerAddress != address(0)) {
+            console.log("Changing registrar owner: %s -> %s", registrar.owner(), ownerAddress);
             registrar.transferOwnership(ownerAddress);
         }
 
