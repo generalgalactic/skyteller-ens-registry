@@ -1,8 +1,11 @@
+build:
+	forge build
+
 test:
 	forge test --offline -vv
 
-build:
-	forge build
+gas-report:
+	NUM=100 forge test --offline --gas-report --match-test "test_Set|test_Multiset"
 
 fork:
 	anvil --fork-url "$(ETH_RPC_URL)"

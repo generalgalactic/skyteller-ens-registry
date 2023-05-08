@@ -9,8 +9,24 @@ import "../src/Errors.sol";
 contract ManagedRegistrarTest is Test {
     ManagedRegistrar public registrar;
 
+    uint256 public NUM; // Number of iterations to do
+
     function setUp() public {
         registrar = new ManagedRegistrar();
+
+        NUM = vm.envOr("NUM", uint256(5));
+    }
+
+    function _genNodesAddrs(uint256 n) internal pure returns (bytes32[] memory nodes, address[] memory addrs) {
+        nodes = new bytes32[](n);
+        addrs = new address[](n);
+
+        for (uint160 i = 0; i < n; i++) {
+            nodes[i] = bytes32(abi.encode(i));
+            addrs[i] = address(0x1000 ^ i);
+        }
+
+        return (nodes, addrs);
     }
 
     function test_Owner() public {
@@ -22,37 +38,30 @@ contract ManagedRegistrarTest is Test {
     }
 
     function test_Set() public {
-        address want = address(0x2000);
-        bytes32 node = bytes32(abi.encodePacked("abcd"));
-        registrar.set(node, want);
-        assertEq(registrar.addr(node), want);
+        (bytes32[] memory nodes, address[] memory addrs) = _genNodesAddrs(NUM);
+
+        for (uint256 i = 0; i < NUM; i++) {
+            registrar.set(nodes[i], addrs[i]);
+            assertEq(registrar.addr(nodes[i]), addrs[i]);
+        }
 
         // Invalid nodes return 0x0
         assertEq(registrar.addr(bytes32(abi.encodePacked("defg"))), address(0x0));
     }
 
     function test_Multiset() public {
+        require(NUM > 1, "test_Multiset requires at least 2 node-address pairs");
+
         // Bulk set a bunch of nodes
-        bytes32[] memory nodes = new bytes32[](5);
-        nodes[0] = bytes32(abi.encode(1));
-        nodes[1] = bytes32(abi.encode(2));
-        nodes[2] = bytes32(abi.encode(3));
-        nodes[3] = bytes32(abi.encode(4));
-        nodes[4] = bytes32(abi.encode(5));
+        (bytes32[] memory nodes, address[] memory addrs) = _genNodesAddrs(NUM);
 
-        address[] memory addrs = new address[](5);
-        addrs[0] = address(0x1);
-        addrs[1] = address(0x2);
-        addrs[2] = address(0x3);
-        addrs[3] = address(0x4);
-        addrs[4] = address(0x5);
-
-        assertEq(registrar.addr(nodes[3]), address(0));
+        // Make sure it's not set yet
+        assertEq(registrar.addr(nodes[NUM-1]), address(0));
 
         registrar.multiset(nodes, addrs);
 
-        assertEq(registrar.addr(nodes[3]), addrs[3]);
-        assertNotEq(registrar.addr(nodes[2]), registrar.addr(nodes[3]));
+        assertEq(registrar.addr(nodes[NUM-1]), addrs[NUM-1]);
+        assertNotEq(registrar.addr(nodes[0]), registrar.addr(nodes[1]));
     }
 
     function test_RevertIf_LengthMismatch() public {
