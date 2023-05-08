@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Owned} from "solmate/auth/Owned.sol";
-
 import {IRegistrar} from "./IRegistrar.sol";
 import {IResolver} from "./IResolver.sol";
 
@@ -14,14 +12,13 @@ import {IResolver} from "./IResolver.sol";
 /// maintains the stored state of subdomain node-to-address mappings.
 /// @dev ManagedENSResolver can be replaced to add functionality without losing
 /// mapping state that is stored in the ManagedRegistrar.
-contract ManagedENSResolver is IResolver, Owned {
+contract ManagedENSResolver is IResolver {
     // FIXME: Do we want this resolver to support other functions for the parent node?
 
     /// @notice IRegistrar manages the assignment mappings.
     IRegistrar private registrar;
 
     constructor(IRegistrar _registrar)
-        Owned(msg.sender)
     {
         registrar = _registrar;
     }
