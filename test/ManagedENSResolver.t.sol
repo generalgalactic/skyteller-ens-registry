@@ -31,6 +31,8 @@ contract ManagedENSResolverTest is Test {
             bytes32 want = 0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2;
             assertEq(got, want);
             // Can confirm in terminal:
+            // $ cast namehash skyteller.eth
+            // 0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2
             // $ cast call --flashbots 0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41 "addr(bytes32) returns (address)" "0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2"
             // 0x7c543D205ef669eF43f5Ae095B4d70125b90893b
         }

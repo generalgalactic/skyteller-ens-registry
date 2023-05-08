@@ -6,6 +6,8 @@ import "forge-std/Script.sol";
 import "../src/ManagedENSResolver.sol";
 import "../src/ManagedRegistrar.sol";
 
+import "../test/Helpers.sol";
+
 contract Deploy is Script {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("ETH_PRIVATE_KEY");
@@ -14,7 +16,10 @@ contract Deploy is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         ManagedRegistrar registrar = new ManagedRegistrar();
-        ManagedENSResolver resolver = new ManagedENSResolver(registrar);
+        new ManagedENSResolver(registrar);
+
+        bytes32 ownerNode = Helpers.namehash("owner", "skyteller", "eth");
+        registrar.set(ownerNode, ownerAddress);
 
         if (ownerAddress != address(0)) {
             console.log("Changing registrar owner: %s -> %s", registrar.owner(), ownerAddress);
