@@ -20,10 +20,24 @@ cast send --from "$OWNER" "$ENS_CONTRACT" "setResolver(bytes32, address)" "$NAME
 # One way to add a subdomain using the global registrar (74,392 gas)
 cast send --from "$OWNER" "$ENS_CONTRACT" "setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl)" \
     "$(cast namehash "skyteller.eth")" \
-    "$(cast keccak "owner")" \
+    "$(cast keccak "foo")" \
     "$OWNER" \
     "$NEW_RESOLVER" \
     "0"
+
+# Other way: (49525 + 48315 gas + 48114 gas registrar call)
+cast send --from "$OWNER" "$ENS_CONTRACT" "setSubnodeOwner(bytes32 node, bytes32 label, address owner)" \
+    "$(cast namehash "skyteller.eth")" \
+    "$(cast keccak "bar")" \
+    "$OWNER" \
+cast send --from "$OWNER" "$ENS_CONTRACT" "setResolver(bytes32, address)" \
+    "$(cast namehash "bar.skyteller.eth")" \
+    "$NEW_RESOLVER"
+
+REGISTRAR_CONTRACT="0x1c39BA375faB6a9f6E0c01B9F49d488e101C2011"
+cast send --from "$OWNER" "$REGISTRAR_CONTRACT" "set(bytes32, address)" \
+    "$(cast namehash "bar.skyteller.eth")" \
+    "$OWNER"
 
 #cast rpc anvil_mine 1  # Should not be necessary?
 
