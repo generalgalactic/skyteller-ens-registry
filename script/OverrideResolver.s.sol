@@ -10,17 +10,7 @@ interface ENS {
     function setResolver(bytes32 node, address resolver) external;
 }
 
-// FIXME: This isn't working with impersonate. Here's some WIP notes:
-/*
-NEW_RESOLVER="..."
-RPC_URL="http://127.0.0.1:8545"
-ENS_CONTRACT="0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
-NAMEHASH=$(cast namehash "skyteller.eth")
-OWNER=$(cast call --rpc-url "$RPC_URL" "$ENS_CONTRACT" "owner(bytes32) returns (address)" "$NAMEHASH")
-cast rpc anvil_impersonateAccount "$OWNER"
-cast call --rpc-url "$RPC_URL" --from "$OWNER" "$ENS_CONTRACT" "setResolver(bytes32, address)" "$NAMEHASH" "$NEW_RESOLVER"
-cast call --rpc-url "$RPC_URL" "$ENS_CONTRACT" "resolver(bytes32)" "$NAMEHASH"
-*/
+// FIXME: This isn't working with impersonate. Use the cast-based script instead for now.
 
 // Override replaces the ENS resolver in a forked environment, for testing.
 // We use --unlocked --sender "0x4863A39d26F8b2e40d2AAbFf1eEe55E4B5015C4f"
