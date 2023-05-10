@@ -15,7 +15,7 @@ contract ManagedENSResolverTest is Test {
 
     function setUp() public {
         registrar = new ManagedRegistrar();
-        resolver = new ManagedENSResolver(registrar);
+        resolver = new ManagedENSResolver(registrar, Helpers.namehash("skyteller.eth"));
     }
 
     function testResolve() public {

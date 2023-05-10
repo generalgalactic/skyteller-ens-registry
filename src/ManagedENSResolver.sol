@@ -34,9 +34,10 @@ contract ManagedENSResolver is IResolver, Owned, ExtendedResolver {
     IENS constant internal ens = IENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     uint64 constant internal ttl = 0;
 
-    constructor(IRegistrar _registrar)
+    constructor(IRegistrar _registrar, bytes32 _parentNode)
         Owned(msg.sender)
     {
+        parentNode = _parentNode;
         registrar = _registrar;
     }
 
@@ -44,7 +45,9 @@ contract ManagedENSResolver is IResolver, Owned, ExtendedResolver {
     /*** admin functions ***/
 
     /// @notice Wrapper around registrar.set but also does setSubnodeRecord.
-    function set(bytes32 _subnode, address _addr) public onlyOwner {
+    /// @param _subnode keccak256 hash of the subdomain label, *not* the namehash of the full domain
+    /// @param _addr Ethereum address to map subdomain to.
+    function register(bytes32 _subnode, address _addr) public onlyOwner {
         bytes32 node = keccak256(abi.encodePacked(parentNode, _subnode));
         registrar.set(node, _addr);
 

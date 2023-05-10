@@ -16,7 +16,7 @@ contract Deploy is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         ManagedRegistrar registrar = new ManagedRegistrar();
-        new ManagedENSResolver(registrar);
+        new ManagedENSResolver(registrar, Helpers.namehash("skyteller", "eth"));
 
         bytes32 ownerNode = Helpers.namehash("owner", "skyteller", "eth");
         registrar.set(ownerNode, ownerAddress);
