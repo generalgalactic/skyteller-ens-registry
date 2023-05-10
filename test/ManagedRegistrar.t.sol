@@ -29,12 +29,26 @@ contract ManagedRegistrarTest is Test {
         return (nodes, addrs);
     }
 
-    function test_Owner() public {
+    function test_Admin() public {
         assertEq(registrar.owner(), address(this));
 
-        vm.prank(address(0x42));
-        vm.expectRevert(Unauthorized.selector);
+        // No revert
         registrar.set(bytes32(abi.encodePacked("a")), address(0x42));
+        registrar.setAdminSetter(address(0xdeadbeef));
+
+        vm.prank(address(0x42));
+        vm.expectRevert("UNAUTHORIZED"); // Violates Owned
+        registrar.setAdminSetter(address(0x42));
+
+        vm.prank(address(0x42));
+        vm.expectRevert(Unauthorized.selector); // Violates adminSetter check
+        registrar.set(bytes32(abi.encodePacked("b")), address(0x69));
+
+        // No revert
+        vm.prank(address(0xdeadbeef));
+        registrar.set(bytes32(abi.encodePacked("c")), address(0x1234));
+
+        assertEq(registrar.addr(bytes32(abi.encodePacked("c"))), address(0x1234));
     }
 
     function test_Set() public {

@@ -36,16 +36,15 @@ contract ManagedRegistrar is IRegistrar, Owned {
         adminSetter = _adminSetter;
     }
 
-    /**********************************/
-    /*** only adminSetter functions ***/
-
+    /*****************************/
+    /*** adminSetter functions ***/
 
     /// @notice Set a subdomain -> addr mapping, can be used to remove by setting to 0.
     /// @dev Careful reassigning existing names to new users, could be an attack vector.
     /// @param _node Namehash of the subdomain, in EIP-137 format
     /// @param _addr Ethereum address to map subdomain to
     function set(bytes32 _node, address _addr) public {
-        if (msg.sender != adminSetter) {
+        if (msg.sender != adminSetter && msg.sender != owner) {
             revert Unauthorized();
         }
 
@@ -54,7 +53,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
     }
 
     function multiset(bytes32[] calldata _nodes, address[] calldata _addrs) public {
-        if (msg.sender != adminSetter) {
+        if (msg.sender != adminSetter && msg.sender != owner) {
             revert Unauthorized();
         }
 
