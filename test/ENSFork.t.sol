@@ -27,10 +27,12 @@ contract ENSForkTest is Test {
         vm.createSelectFork(rpcUrl);
 
         registrar = new ManagedRegistrar();
-        resolver = new ManagedENSResolver(registrar, Helpers.namehash("skyteller.eth"));
+        resolver = new ManagedENSResolver(registrar, Helpers.namehash("skyteller", "eth"));
 
         registrar.setAdminSetter(address(resolver));
     }
+
+    // TODO: Could also mock ENS altogether using https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#appendix-a-registry-implementation
 
     function testEndToEnd() public {
         bytes32 skytellerNode = Helpers.namehash("skyteller", "eth");
