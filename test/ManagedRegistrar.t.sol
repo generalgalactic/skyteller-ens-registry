@@ -33,7 +33,7 @@ contract ManagedRegistrarTest is Test {
         assertEq(registrar.owner(), address(this));
 
         vm.prank(address(0x42));
-        vm.expectRevert("UNAUTHORIZED");
+        vm.expectRevert(Unauthorized.selector);
         registrar.set(bytes32(abi.encodePacked("a")), address(0x42));
     }
 
