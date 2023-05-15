@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 
 import "../src/ManagedENSResolver.sol";
-import "../src/ManagedRegistrar.sol";
+import "../src/ManagedRegistrarWithReverse.sol";
 import "../src/IRegistrar.sol";
 
 import "./Helpers.sol";
@@ -20,14 +20,17 @@ interface ENS {
 // End-to-end forked ENS testing
 contract ENSForkTest is Test {
     ManagedENSResolver public resolver;
-    ManagedRegistrar public registrar;
+    ManagedRegistrarWithReverse public registrar;
 
     function setUp() public {
         string memory rpcUrl = vm.envString("ETH_RPC_URL");
         vm.createSelectFork(rpcUrl);
 
-        registrar = new ManagedRegistrar();
-        resolver = new ManagedENSResolver(registrar, Helpers.namehash("skyteller", "eth"));
+        registrar = new ManagedRegistrarWithReverse();
+        resolver = new ManagedENSResolver(
+            registrar,
+            registrar,
+            Helpers.namehash("skyteller", "eth"));
 
         registrar.setAdminSetter(address(resolver));
     }

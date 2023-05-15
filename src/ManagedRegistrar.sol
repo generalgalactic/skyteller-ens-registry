@@ -21,8 +21,6 @@ contract ManagedRegistrar is IRegistrar, Owned {
     /// @dev We keep these separate to allow other contracts to call in.
     address public adminSetter;
 
-    // TODO: addressToName for reverse resolver?
-
     constructor()
         Owned(msg.sender)
     {
@@ -74,7 +72,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
         return payable(subdomainToAddress[_node]);
     }
 
-    function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
+    function supportsInterface(bytes4 interfaceID) public virtual pure returns (bool) {
         return interfaceID == 0x3b3b57de || // addr(bytes32 node) returns (address)
                interfaceID == 0x01ffc9a7;   // supportsInterface
     }

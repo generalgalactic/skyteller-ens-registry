@@ -4,7 +4,9 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 
 import "../src/ManagedENSResolver.sol";
-import "../src/ManagedRegistrar.sol";
+import "../src/ManagedRegistrarWithReverse.sol";
+
+import "../src/IResolver.sol";
 
 import "../test/Helpers.sol";
 
@@ -15,8 +17,12 @@ contract Deploy is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        ManagedRegistrar registrar = new ManagedRegistrar();
-        new ManagedENSResolver(registrar, Helpers.namehash("skyteller", "eth"));
+        ManagedRegistrarWithReverse registrar = new ManagedRegistrarWithReverse();
+        new ManagedENSResolver(
+            registrar, // IRegistrar
+            registrar, // INameResolver
+            Helpers.namehash("skyteller", "eth") // parentNode
+        );
 
         bytes32 ownerNode = Helpers.namehash("owner", "skyteller", "eth");
         registrar.set(ownerNode, ownerAddress);

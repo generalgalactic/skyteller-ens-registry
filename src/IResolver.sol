@@ -6,6 +6,13 @@ interface IResolver {
     function resolver(bytes32 node) external view returns (address);
 }
 
+// EIP-181
+interface INameResolver {
+    event NameChanged(bytes32 indexed node, string name);
+
+    function name(bytes32 node) external view returns (string memory);
+}
+
 interface IFullResolver {
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 

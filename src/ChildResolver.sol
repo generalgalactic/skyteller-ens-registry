@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IRegistrar} from "./IRegistrar.sol";
-import {IFullResolver} from "./IResolver.sol";
+import {INameResolver, IFullResolver} from "./IResolver.sol";
 
 import {Resolver} from "./Resolver.sol";
 
@@ -13,13 +13,14 @@ import {Resolver} from "./Resolver.sol";
 abstract contract ChildResolver is Resolver, IFullResolver {
     IFullResolver public parentResolver;
 
-    constructor(IFullResolver _parentResolver, IRegistrar _registrar)
-        Resolver(_registrar)
+    constructor(IFullResolver _parentResolver, IRegistrar _registrar, INameResolver _nameResolver)
+        Resolver(_registrar, _nameResolver)
     {
         parentResolver = _parentResolver;
     }
 
     // Borrowed from https://github.com/ensdomains/ens-contracts/blob/883a0a2d64d07df54f3ebbb0e81cf2e9d012c14d/contracts/resolvers/profiles/AddrResolver.sol#L82
+    // (MIT)
     function addressToBytes(address a) internal pure returns (bytes memory b) {
         b = new bytes(20);
         assembly {
@@ -47,6 +48,14 @@ abstract contract ChildResolver is Resolver, IFullResolver {
         return parentResolver.addr(nodeID, coinType);
     }
 
+    function name(bytes32 reverseNodeID) external view override(Resolver, IFullResolver) returns (string memory) {
+        string memory r = nameResolver.name(reverseNodeID);
+        if (bytes(r).length > 0) {
+            return r;
+        }
+        return parentResolver.name(reverseNodeID);
+    }
+
     function supportsInterface(bytes4 interfaceID) public view override(IFullResolver, Resolver) returns (bool) {
         return parentResolver.supportsInterface(interfaceID) || super.supportsInterface(interfaceID);
     }
@@ -62,7 +71,6 @@ abstract contract ChildResolver is Resolver, IFullResolver {
     function dnsRecord(bytes32 node, bytes32 _name, uint16 resource) external view returns (bytes memory) { return parentResolver.dnsRecord(node, _name, resource); }
     function zonehash(bytes32 node) external view returns (bytes memory) { return parentResolver.zonehash(node); }
     function interfaceImplementer(bytes32 node, bytes4 interfaceID) external view returns (address) { return parentResolver.interfaceImplementer(node, interfaceID); }
-    function name(bytes32 node) external view returns (string memory) { return parentResolver.name(node); }
     function pubkey(bytes32 node) external view returns (bytes32 x, bytes32 y) { return parentResolver.pubkey(node); }
     function text(bytes32 node, string calldata key) external view returns (string memory) { return parentResolver.text(node, key); }
 }

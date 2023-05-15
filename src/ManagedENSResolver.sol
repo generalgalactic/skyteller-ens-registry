@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Owned} from "solmate/auth/Owned.sol";
 
+import {INameResolver} from "./IResolver.sol";
 import {IRegistrar} from "./IRegistrar.sol";
 import {Resolver} from "./Resolver.sol";
 
@@ -21,9 +22,9 @@ contract ManagedENSResolver is Resolver, Owned {
     IENS constant internal ens = IENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
     uint64 constant internal ttl = 0;
 
-    constructor(IRegistrar _registrar, bytes32 _parentNode)
+    constructor(IRegistrar _registrar, INameResolver _nameResolver, bytes32 _parentNode)
         Owned(msg.sender)
-        Resolver(_registrar)
+        Resolver(_registrar, _nameResolver)
     {
         parentNode = _parentNode;
     }
