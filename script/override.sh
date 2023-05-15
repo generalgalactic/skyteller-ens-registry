@@ -4,8 +4,9 @@ set -xe
 export ETH_RPC_URL="http://127.0.0.1:8545"
 
 NEW_RESOLVER="$1"
+REGISTRAR_CONTRACT="$2"
 if [[ ! "$NEW_RESOLVER" ]]; then
-    echo "Usage: $0 <resolver address>"
+    echo "Usage: $0 <resolver address> <registrar address>"
     exit 1
 fi
 
@@ -29,12 +30,12 @@ cast send --from "$OWNER" "$ENS_CONTRACT" "setSubnodeRecord(bytes32 node, bytes3
 cast send --from "$OWNER" "$ENS_CONTRACT" "setSubnodeOwner(bytes32 node, bytes32 label, address owner)" \
     "$(cast namehash "skyteller.eth")" \
     "$(cast keccak "bar")" \
-    "$OWNER" \
+    "$OWNER"
+
 cast send --from "$OWNER" "$ENS_CONTRACT" "setResolver(bytes32, address)" \
     "$(cast namehash "bar.skyteller.eth")" \
     "$NEW_RESOLVER"
 
-REGISTRAR_CONTRACT="0x1c39BA375faB6a9f6E0c01B9F49d488e101C2011"
 cast send --from "$OWNER" "$REGISTRAR_CONTRACT" "set(bytes32, address)" \
     "$(cast namehash "bar.skyteller.eth")" \
     "$OWNER"
