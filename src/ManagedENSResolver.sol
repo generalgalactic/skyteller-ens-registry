@@ -31,7 +31,7 @@ contract ManagedENSResolver is Resolver, Owned {
     /***********************/
     /*** admin functions ***/
 
-    /// @notice Wrapper around registrar.set but also does setSubnodeRecord.
+    /// @notice Wrapper around registrar.set(...) but also does setSubnodeRecord.
     /// @param _subnode keccak256 hash of the subdomain label, *not* the namehash of the full domain
     /// @param _addr Ethereum address to map subdomain to.
     function register(bytes32 _subnode, address _addr) public onlyOwner {

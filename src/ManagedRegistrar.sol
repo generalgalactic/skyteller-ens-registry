@@ -70,8 +70,8 @@ contract ManagedRegistrar is IRegistrar, Owned {
     /*********************************/
     /*** public external functions ***/
 
-    function addr(bytes32 _node) external view returns (address) {
-        return subdomainToAddress[_node];
+    function addr(bytes32 _node) external view returns (address payable) {
+        return payable(subdomainToAddress[_node]);
     }
 
     function supportsInterface(bytes4 interfaceID) public pure returns (bool) {

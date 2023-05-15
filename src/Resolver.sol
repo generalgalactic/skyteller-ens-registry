@@ -13,7 +13,7 @@ import {IResolver} from "./IResolver.sol";
 
 /// @notice Resolver is a basic resolver wrapper around a ManagedRegistrar which
 /// maintains the stored state of subdomain node-to-address mappings.
-contract Resolver is IResolver, ExtendedResolver {
+abstract contract Resolver is IResolver, ExtendedResolver {
     // FIXME: Do we want this resolver to support other functions for the parent node?
 
     /// @notice IRegistrar manages the assignment mappings.
@@ -27,7 +27,7 @@ contract Resolver is IResolver, ExtendedResolver {
     /************************/
     /*** public functions ***/
 
-    function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
+    function supportsInterface(bytes4 interfaceID) public view virtual returns (bool) {
         return interfaceID == 0x3b3b57de || // addr(bytes32 node) returns (address)
                // TODO: interfaceID == 0x691f3431 || // name(bytes32 node) returns (string memory);
                interfaceID == 0x9061b923 || // resolve(bytes calldata name, bytes calldata data) returns(bytes);
@@ -35,11 +35,11 @@ contract Resolver is IResolver, ExtendedResolver {
                interfaceID == 0x01ffc9a7;   // supportsInterface
     }
 
-    function addr(bytes32 nodeID) external view returns (address) {
+    function addr(bytes32 nodeID) external view virtual returns (address payable) {
         return registrar.addr(nodeID);
     }
 
-    function resolver(bytes32) external view returns (address) {
+    function resolver(bytes32) external view virtual returns (address) {
         // This resolver handles all subnodes.
         return address(this);
     }

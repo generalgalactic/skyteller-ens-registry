@@ -9,5 +9,5 @@ interface IRegistrar {
     function set(bytes32, address) external;
     function multiset(bytes32[] calldata, address[] calldata) external;
 
-    function addr(bytes32 node) external view returns (address);
+    function addr(bytes32 node) external view returns (address payable);
 }
