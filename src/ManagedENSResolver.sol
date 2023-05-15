@@ -2,31 +2,18 @@
 pragma solidity ^0.8.13;
 
 import {Owned} from "solmate/auth/Owned.sol";
-import {ExtendedResolver} from "ens-contracts/resolvers/profiles/ExtendedResolver.sol";
 
 import {IRegistrar} from "./IRegistrar.sol";
-import {IResolver} from "./IResolver.sol";
+import {Resolver} from "./Resolver.sol";
 
 interface IENS {
     function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external;
 }
 
-
-// References:
-// - https://github.com/ensdomains/resolvers/blob/master/contracts/profiles/AddrResolver.sol
-// - https://eips.ethereum.org/EIPS/eip-137#appendix-b-sample-resolver-implementations
-// - https://github.com/ensdomains/subdomain-registrar/blob/1ffde8a296a071358fd2811e51a9df2ffcd72616/contracts/SubdomainRegistrar.sol
-
-/// @notice ManagedENSResolver is a wrapper around a ManagedRegistrar which
-/// maintains the stored state of subdomain node-to-address mappings.
-/// @dev ManagedENSResolver can be replaced to add functionality without losing
-/// mapping state that is stored in the ManagedRegistrar.
-contract ManagedENSResolver is IResolver, Owned, ExtendedResolver {
-    // FIXME: Do we want this resolver to support other functions for the parent node?
-
-    /// @notice IRegistrar manages the assignment mappings.
-    IRegistrar public registrar;
-
+/// @notice ManagedENSResolver is a Resolver that has a register(...) helper
+/// for setting subnode records on the root ENS instance. It's useful for cases
+/// where wildcard resolving is unsupported.
+contract ManagedENSResolver is Resolver, Owned {
     /// @notice parentNode is the namehash of the node that this is the resolver for.
     /// @dev Used for doing setSubnodeRecord during set.
     bytes32 public parentNode;
@@ -36,9 +23,9 @@ contract ManagedENSResolver is IResolver, Owned, ExtendedResolver {
 
     constructor(IRegistrar _registrar, bytes32 _parentNode)
         Owned(msg.sender)
+        Resolver(_registrar)
     {
         parentNode = _parentNode;
-        registrar = _registrar;
     }
 
     /***********************/
@@ -52,31 +39,5 @@ contract ManagedENSResolver is IResolver, Owned, ExtendedResolver {
         registrar.set(node, _addr);
 
         ens.setSubnodeRecord(parentNode, _subnode, address(this), address(this), ttl);
-    }
-
-    /************************/
-    /*** public functions ***/
-
-    function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
-        return interfaceID == 0x3b3b57de || // addr(bytes32 node) returns (address)
-               // TODO: interfaceID == 0x691f3431 || // name(bytes32 node) returns (string memory);
-               interfaceID == 0x9061b923 || // resolve(bytes calldata name, bytes calldata data) returns(bytes);
-               interfaceID == 0x0178b8bf || // resolver(bytes32 node) returns (address)
-               interfaceID == 0x01ffc9a7;   // supportsInterface
-    }
-
-    function addr(bytes32 nodeID) external view returns (address) {
-        return registrar.addr(nodeID);
-    }
-
-    function resolver(bytes32) external view returns (address) {
-        // This resolver handles all subnodes.
-        return address(this);
-    }
-
-    // Per Resolver specification: https://eips.ethereum.org/EIPS/eip-137#resolver-specification
-    // "Resolvers MUST specify a fallback function that throws."
-    fallback() external {
-        revert();
     }
 }
