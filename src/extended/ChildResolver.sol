@@ -11,7 +11,7 @@ import {Resolver} from "../Resolver.sol";
 /// from a parent resolver, to inherit attributes that have already been set.
 /// @dev Parent takes precedence.
 abstract contract ChildResolver is Resolver, IFullResolver {
-    IFullResolver public parentResolver;
+    IFullResolver public immutable parentResolver;
 
     constructor(IFullResolver _parentResolver, IRegistrar _registrar, INameResolver _nameResolver)
         Resolver(_registrar, _nameResolver)
