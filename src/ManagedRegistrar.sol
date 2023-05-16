@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Owned} from "solmate/auth/Owned.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 import {IRegistrar} from "./IRegistrar.sol";
 import "./Errors.sol";
@@ -13,7 +13,7 @@ import "./Errors.sol";
 /// @dev ManagedRegistrar happens to be a valid basic ENS Resolver, but we still
 /// use a separate IResolver contract in front of it so that we can add
 /// functionality without having to reinitialize the accumulated state.
-contract ManagedRegistrar is IRegistrar, Owned {
+contract ManagedRegistrar is IRegistrar, Ownable {
     /// @notice Mapping of subdomain to address
     mapping(bytes32 => address) public subdomainToAddress;
 
@@ -22,7 +22,6 @@ contract ManagedRegistrar is IRegistrar, Owned {
     address public adminSetter;
 
     constructor()
-        Owned(msg.sender)
     {
         adminSetter = msg.sender;
     }
@@ -42,7 +41,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
     /// @param _node Namehash of the subdomain, in EIP-137 format
     /// @param _addr Ethereum address to map subdomain to
     function set(bytes32 _node, address _addr) public {
-        if (msg.sender != adminSetter && msg.sender != owner) {
+        if (msg.sender != adminSetter && msg.sender != owner()) {
             revert Unauthorized();
         }
 
@@ -51,7 +50,7 @@ contract ManagedRegistrar is IRegistrar, Owned {
     }
 
     function multiset(bytes32[] calldata _nodes, address[] calldata _addrs) public {
-        if (msg.sender != adminSetter && msg.sender != owner) {
+        if (msg.sender != adminSetter && msg.sender != owner()) {
             revert Unauthorized();
         }
 

@@ -37,7 +37,7 @@ contract ManagedRegistrarTest is Test {
         registrar.setAdminSetter(address(0xdeadbeef));
 
         vm.prank(address(0x42));
-        vm.expectRevert("UNAUTHORIZED"); // Violates Owned
+        vm.expectRevert("Ownable: caller is not the owner"); // Violates Owned
         registrar.setAdminSetter(address(0x42));
 
         vm.prank(address(0x42));

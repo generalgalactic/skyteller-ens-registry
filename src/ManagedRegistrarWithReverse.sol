@@ -13,7 +13,7 @@ contract ManagedRegistrarWithReverse is ManagedRegistrar, INameResolver {
     /*** adminSetter functions ***/
 
     function setName(bytes32 _reverseNode, string calldata _name) public {
-        if (msg.sender != adminSetter && msg.sender != owner) {
+        if (msg.sender != adminSetter && msg.sender != owner()) {
             revert Unauthorized();
         }
 

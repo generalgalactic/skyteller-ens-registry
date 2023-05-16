@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Owned} from "solmate/auth/Owned.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 import {INameResolver} from "./IResolver.sol";
 import {IRegistrar} from "./IRegistrar.sol";
@@ -14,7 +14,7 @@ interface IENS {
 /// @notice ManagedENSResolver is a Resolver that has a register(...) helper
 /// for setting subnode records on the root ENS instance. It's useful for cases
 /// where wildcard resolving is unsupported.
-contract ManagedENSResolver is Resolver, Owned {
+contract ManagedENSResolver is Resolver, Ownable {
     /// @notice parentNode is the namehash of the node that this is the resolver for.
     /// @dev Used for doing setSubnodeRecord during set.
     bytes32 public parentNode;
@@ -23,7 +23,6 @@ contract ManagedENSResolver is Resolver, Owned {
     uint64 constant internal ttl = 0;
 
     constructor(IRegistrar _registrar, INameResolver _nameResolver, bytes32 _parentNode)
-        Owned(msg.sender)
         Resolver(_registrar, _nameResolver)
     {
         parentNode = _parentNode;
