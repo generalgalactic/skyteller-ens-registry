@@ -9,17 +9,28 @@ contract ManagedRegistrarWithReverse is ManagedRegistrar, INameResolver {
     /// @notice Mapping of reverse nodes to names
     mapping(bytes32 => string) public reverseNodeToName;
 
+
+    /************************/
+    /*** internal helpers ***/
+
+    /// @dev Helper for setting a reverseNode->string mapping
+    function _setName(bytes32 _reverseNode, string calldata _name) internal {
+        reverseNodeToName[_reverseNode] = _name;
+        emit NameChanged(_reverseNode, _name);
+    }
+
+
     /*****************************/
     /*** adminSetter functions ***/
 
     function setName(bytes32 _reverseNode, string calldata _name) public {
-        if (msg.sender != adminSetter && msg.sender != owner()) {
+        if (!_canSet(msg.sender)) {
             revert Unauthorized();
         }
 
-        reverseNodeToName[_reverseNode] = _name;
-        emit NameChanged(_reverseNode, _name);
+        _setName(_reverseNode, _name);
     }
+
 
     /*********************************/
     /*** public external functions ***/

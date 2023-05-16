@@ -26,12 +26,32 @@ contract ManagedRegistrar is IRegistrar, Ownable {
         adminSetter = msg.sender;
     }
 
+
+    /************************/
+    /*** internal helpers ***/
+
+    /// @dev return whether the sender is allowed to set values for any node.
+    /// @param _sender User who is making the transaction.
+    function _canSet(address _sender) internal view returns(bool) {
+        if (_sender == adminSetter || _sender == owner()) return true;
+        return false;
+    }
+
+    /// @dev Helper for setting a node->address mapping
+    function _setNode(bytes32 _node, address _addr) internal {
+        subdomainToAddress[_node] = _addr;
+        emit AddrChanged(_node, _addr);
+    }
+
+
     /***************************/
     /*** onlyOwner functions ***/
 
+    /// @dev Owner controls the address that is allowed to set values.
     function setAdminSetter(address _adminSetter) external onlyOwner {
         adminSetter = _adminSetter;
     }
+
 
     /*****************************/
     /*** adminSetter functions ***/
@@ -41,16 +61,15 @@ contract ManagedRegistrar is IRegistrar, Ownable {
     /// @param _node Namehash of the subdomain, in EIP-137 format
     /// @param _addr Ethereum address to map subdomain to
     function set(bytes32 _node, address _addr) public {
-        if (msg.sender != adminSetter && msg.sender != owner()) {
+        if (!_canSet(msg.sender)) {
             revert Unauthorized();
         }
 
-        subdomainToAddress[_node] = _addr;
-        emit AddrChanged(_node, _addr);
+        _setNode(_node, _addr);
     }
 
     function multiset(bytes32[] calldata _nodes, address[] calldata _addrs) public {
-        if (msg.sender != adminSetter && msg.sender != owner()) {
+        if (!_canSet(msg.sender)) {
             revert Unauthorized();
         }
 
@@ -59,8 +78,7 @@ contract ManagedRegistrar is IRegistrar, Ownable {
         }
 
         for (uint256 i = 0; i < _nodes.length; i++) {
-            subdomainToAddress[_nodes[i]] = _addrs[i];
-            emit AddrChanged(_nodes[i], _addrs[i]);
+            _setNode(_nodes[i], _addrs[i]);
         }
     }
 
