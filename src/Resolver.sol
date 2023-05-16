@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import {ExtendedResolver} from "ens-contracts/resolvers/profiles/ExtendedResolver.sol";
 
-import {IRegistrar} from "./IRegistrar.sol";
-import {IResolver, INameResolver} from "./IResolver.sol";
+import {IRegistrar} from "./interfaces/IRegistrar.sol";
+import {IResolver, INameResolver} from "./interfaces/IResolver.sol";
 
 // References:
 // - https://github.com/ensdomains/resolvers/blob/master/contracts/profiles/AddrResolver.sol

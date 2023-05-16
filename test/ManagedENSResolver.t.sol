@@ -3,11 +3,10 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../src/ManagedENSResolver.sol";
-import "../src/ManagedRegistrarWithReverse.sol";
-import "../src/IRegistrar.sol";
+import {ManagedENSResolver} from "../src/extended/ManagedENSResolver.sol";
+import {ManagedRegistrarWithReverse} from "../src/extended/ManagedRegistrarWithReverse.sol";
 
-import "./Helpers.sol";
+import {Helpers} from "./Helpers.sol";
 
 contract ManagedENSResolverTest is Test {
     ManagedENSResolver public resolver;

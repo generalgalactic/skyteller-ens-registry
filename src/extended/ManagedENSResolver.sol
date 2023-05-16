@@ -3,9 +3,9 @@ pragma solidity ^0.8.13;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 
-import {INameResolver} from "./IResolver.sol";
-import {IRegistrar} from "./IRegistrar.sol";
-import {Resolver} from "./Resolver.sol";
+import {INameResolver} from "../interfaces/IResolver.sol";
+import {IRegistrar} from "../interfaces/IRegistrar.sol";
+import {Resolver} from "../Resolver.sol";
 
 interface IENS {
     function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external;

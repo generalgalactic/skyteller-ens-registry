@@ -3,12 +3,10 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 
-import "../src/ManagedENSResolver.sol";
-import "../src/ManagedRegistrarWithReverse.sol";
+import {ManagedENSResolver} from "../src/extended/ManagedENSResolver.sol";
+import {ManagedRegistrarWithReverse} from "../src/extended/ManagedRegistrarWithReverse.sol";
 
-import "../src/IResolver.sol";
-
-import "../test/Helpers.sol";
+import {Helpers} from "../test/Helpers.sol";
 
 contract Deploy is Script {
     function run() public {

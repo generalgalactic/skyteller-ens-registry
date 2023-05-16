@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {IRegistrar} from "./IRegistrar.sol";
-import {INameResolver, IFullResolver} from "./IResolver.sol";
+import {IRegistrar} from "../interfaces/IRegistrar.sol";
+import {INameResolver, IFullResolver} from "../interfaces/IResolver.sol";
 
-import {Resolver} from "./Resolver.sol";
+import {Resolver} from "../Resolver.sol";
 
 
 /// @notice ChildResolver a Resolver wrapper that proxies additional interfaces

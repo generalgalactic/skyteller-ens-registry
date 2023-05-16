@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ManagedRegistrar} from "./ManagedRegistrar.sol";
-import {INameResolver} from "./IResolver.sol";
-import {Unauthorized} from "./Errors.sol";
+import {ManagedRegistrar} from "../ManagedRegistrar.sol";
+import {INameResolver} from "../interfaces/IResolver.sol";
+import {Unauthorized} from "../Errors.sol";
 
 contract ManagedRegistrarWithReverse is ManagedRegistrar, INameResolver {
     /// @notice Mapping of reverse nodes to names

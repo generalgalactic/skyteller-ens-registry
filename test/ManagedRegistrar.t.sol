@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "../src/ManagedRegistrar.sol";
-import "../src/Errors.sol";
+import {ManagedRegistrar} from "../src/ManagedRegistrar.sol";
+import {Unauthorized, LengthMismatch} from "../src/Errors.sol";
 
 contract ManagedRegistrarTest is Test {
     ManagedRegistrar public registrar;

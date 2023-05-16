@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 
-import {IRegistrar} from "./IRegistrar.sol";
+import {IRegistrar} from "./interfaces/IRegistrar.sol";
 import "./Errors.sol";
 
 // References:
