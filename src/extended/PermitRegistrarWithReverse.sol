@@ -22,7 +22,7 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
     bytes32 private constant domainTypeHash = 0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f;
 
     /// @dev keccak256("Register(string name,address addr,uint256 deadline)");
-    bytes32 public constant PERMIT_TYPEHASH = 0x7e293f4c92597470e19ac449a798010419e7caa79b4187b4268bfcc2b10bd474;
+    bytes32 public constant PERMIT_REGISTER_TYPEHASH = 0x7e293f4c92597470e19ac449a798010419e7caa79b4187b4268bfcc2b10bd474;
 
 
     /************************/
@@ -80,7 +80,7 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
         // Provided signature should cover this payload
         bytes32 digest = keccak256(abi.encodePacked(
             '\x19\x01', DOMAIN_SEPARATOR(),
-            keccak256(abi.encode(PERMIT_TYPEHASH, name, addr, deadline))
+            keccak256(abi.encode(PERMIT_REGISTER_TYPEHASH, name, addr, deadline))
         ));
 
         // TODO: Add ERC-1271 support?
