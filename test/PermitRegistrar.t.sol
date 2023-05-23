@@ -23,7 +23,7 @@ contract PermitRegistrarTest is Test {
         registrar.setAdminSigner(signer);
     }
 
-    function test_registerWithPermit() public {
+    function test_RegisterWithPermit() public {
         bytes32 node = Helpers.namehash("foo", "skyteller", "eth");
 
         string memory name = "foo";
@@ -41,5 +41,74 @@ contract PermitRegistrarTest is Test {
 
         assertEq(registrar.addr(node), caller);
         assertEq(registrar.name(node), name);
+    }
+
+    function test_RevertIf_PermitExpired() public {
+        string memory name = "foo";
+        address caller = address(0x42);
+        uint256 deadline = block.timestamp + 1;
+
+        bytes32 digest = registrar.digestRegister(name, caller, deadline);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerKey, digest);
+
+        vm.warp(deadline + 42);
+
+        vm.prank(caller);
+        vm.expectRevert(PermitExpired.selector);
+        registrar.permitRegister(name, caller, deadline, v, r, s);
+    }
+
+    function test_RevertIf_Unauthorized() public {
+        uint256 wrongSignerKey = 42;
+
+        string memory name = "foo";
+        address caller = address(0x42);
+        uint256 deadline = block.timestamp + 1;
+
+        bytes32 digest = registrar.digestRegister(name, caller, deadline);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(wrongSignerKey, digest);
+
+        vm.prank(caller);
+        vm.expectRevert(Unauthorized.selector);
+        registrar.permitRegister(name, caller, deadline, v, r, s);
+    }
+
+    function test_RevertIf_Unauthorized_Args() public {
+        string memory name = "foo";
+        address caller = address(0x42);
+        uint256 deadline = block.timestamp + 1;
+
+        bytes32 digest = registrar.digestRegister(name, caller, deadline);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerKey, digest);
+
+        // Invalid name
+        vm.expectRevert(Unauthorized.selector);
+        registrar.permitRegister("bar", caller, deadline, v, r, s);
+
+        // Invalid caller
+        vm.expectRevert(Unauthorized.selector);
+        registrar.permitRegister(name, address(0x69), deadline, v, r, s);
+
+        // Invalid deadline
+        vm.expectRevert(Unauthorized.selector);
+        registrar.permitRegister(name, caller, deadline + 1, v, r, s);
+
+        // Confirm again everything works when it is valid
+        registrar.permitRegister(name, caller, deadline, v, r, s);
+    }
+
+
+    function test_RevertIf_InvalidSignature() public {
+        string memory name = "foo";
+        address caller = address(0x42);
+        uint256 deadline = block.timestamp + 1;
+
+        bytes32 digest = registrar.digestRegister(name, caller, deadline);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerKey, digest);
+
+        // Invalid signature component
+        r = bytes32(0);
+        vm.expectRevert(InvalidSignature.selector);
+        registrar.permitRegister(name, caller, deadline, v, r, s);
     }
 }
