@@ -108,7 +108,7 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
         // Provided signature should cover this payload
         bytes32 digest = digestRegister(name, addr, deadline);
 
-        // TODO: Add ERC-1271 support?
+        // TODO: Add ERC-1271 support? (If we need a smart contract signer)
         address recoveredAddress = ecrecover(digest, v, r, s);
 
         if (recoveredAddress == address(0)) {

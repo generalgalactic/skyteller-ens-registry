@@ -5,7 +5,7 @@ test:
 	forge test --offline -vv
 
 gas-report:
-	NUM=100 forge test --offline --gas-report --match-test "test_Set|test_Multiset"
+	NUM=100 forge test --offline --gas-report --match-test "test_Set|test_Multiset|test_RegisterWithPermit"
 
 fork:
 	anvil --fork-url "$(ETH_RPC_URL)"
