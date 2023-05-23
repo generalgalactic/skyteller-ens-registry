@@ -12,6 +12,9 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
     /// @notice Address of authorized permit signer.
     address public adminSigner;
 
+    /// @notice Namehash of parent ENS node of this registrar.
+    bytes32 public immutable parentNode;
+
     /// @dev keccak256("PermitRegistrarWithReverse") of version used for verifying permit signature.
     bytes32 private constant nameHash = 0x7f02f7f18bbf0266296c6dbd6c9de3c0aeb5ca7f38822c459c5e7ea81764e77f;
 
@@ -25,12 +28,22 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
     bytes32 public constant PERMIT_REGISTER_TYPEHASH = 0x7e293f4c92597470e19ac449a798010419e7caa79b4187b4268bfcc2b10bd474;
 
 
+    constructor(bytes32 _parentNode)
+        ManagedRegistrarWithReverse()
+    {
+        adminSigner = msg.sender;
+        parentNode = _parentNode;
+    }
+
     /************************/
     /*** internal helpers ***/
 
     /// @dev Helper for setting the address, node, and reverse node lookup at once.
     function _register(string calldata _name, address _addr) internal {
-        // TODO: ...
+        bytes32 node = keccak256(abi.encodePacked(parentNode, keccak256(abi.encodePacked(_name))));
+
+        _setNode(node, _addr);
+        _setName(node, _name);
     }
 
 
@@ -54,6 +67,19 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
                 versionHash,
                 block.chainid,
                 address(this)
+            ));
+    }
+
+    /// @notice Encode a permitted register request for signing by adminSigner.
+    /// @dev This is a helper that can be made private or inlined.
+    function digestRegister(
+        string calldata name,
+        address addr,
+        uint256 deadline
+    ) public view returns (bytes32) {
+        return keccak256(abi.encodePacked(
+            '\x19\x01', DOMAIN_SEPARATOR(),
+            keccak256(abi.encode(PERMIT_REGISTER_TYPEHASH, name, addr, deadline))
         ));
     }
 
@@ -65,7 +91,7 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
     /// @param v secp256k1 signature component
     /// @param r secp256k1 signature component
     /// @param s secp256k1 signature component
-    function permit_Register(
+    function permitRegister(
         string calldata name,
         address addr,
         uint256 deadline,
@@ -73,15 +99,14 @@ contract PermitRegistrarWithReverse is ManagedRegistrarWithReverse {
         bytes32 r,
         bytes32 s
     ) external {
-        if (block.timestamp <= deadline) {
+        if (block.timestamp > deadline) {
             revert PermitExpired();
         }
 
+        // TODO: Switch to @openzeppelin-contracts/contracts/utils/cryptography's ECDSA/EIP712?
+
         // Provided signature should cover this payload
-        bytes32 digest = keccak256(abi.encodePacked(
-            '\x19\x01', DOMAIN_SEPARATOR(),
-            keccak256(abi.encode(PERMIT_REGISTER_TYPEHASH, name, addr, deadline))
-        ));
+        bytes32 digest = digestRegister(name, addr, deadline);
 
         // TODO: Add ERC-1271 support?
         address recoveredAddress = ecrecover(digest, v, r, s);
