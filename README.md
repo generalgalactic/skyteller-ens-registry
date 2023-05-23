@@ -3,8 +3,8 @@
 ## Getting Started
 
 ```
-$ nix develop  # or make sure foundry is installed
-$ make test  # or `forge test`
+$ nix develop  # or install foundry some other way
+$ make test    # or `forge test`
 ```
 
 ## Overview
@@ -14,7 +14,19 @@ $ make test  # or `forge test`
 A simple managed registrar, allowing an admin to set namehash node to address
 mappings.
 
-Note: ENS operates on recursive domain hashes (namehash) rather than DNS-style domain strings. Roughly speaking, `foo.skyteller.eth`'s namehash is `hash("foo" + hash("skyteller" + hash("eth")))`. When resolving a domain, the namehash is provided.
+Note: ENS operates on recursive domain component hashes ([namehash](https://docs.ens.domains/contract-api-reference/name-processing)) rather than DNS-style domain strings. Roughly speaking, `foo.skyteller.eth`'s namehash is:
+
+```
+sha3(
+    sha3(
+        sha3(
+            bytes32(0x0) + sha3("eth")
+        ) + sha3("skyteller")
+    ) + sha3("foo")
+)
+```
+
+When a client is resolving a domain, the namehash is provided.
 
 
 ### `src/Resolver.sol`
