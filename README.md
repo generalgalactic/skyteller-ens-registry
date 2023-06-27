@@ -1,4 +1,4 @@
-# Skyteller: ENS Registry
+# ENS Managed Registry
 
 ## Getting Started
 
@@ -14,14 +14,14 @@ $ make test    # or `forge test`
 A simple managed registrar, allowing an admin to set namehash node to address
 mappings.
 
-Note: ENS operates on recursive domain component hashes ([namehash](https://docs.ens.domains/contract-api-reference/name-processing)) rather than DNS-style domain strings. Roughly speaking, `foo.skyteller.eth`'s namehash is:
+Note: ENS operates on recursive domain component hashes ([namehash](https://docs.ens.domains/contract-api-reference/name-processing)) rather than DNS-style domain strings. Roughly speaking, `foo.example.eth`'s namehash is:
 
 ```
 sha3(
     sha3(
         sha3(
             bytes32(0x0) + sha3("eth")
-        ) + sha3("skyteller")
+        ) + sha3("example")
     ) + sha3("foo")
 )
 ```
@@ -33,7 +33,7 @@ When a client is resolving a domain, the namehash is provided.
 
 A wildcard ENS resolver that uses a registrar (like `ManagedRegistrar` above) as a backend.
 
-Note: [Wildcard resolvers](https://docs.ens.domains/ens-improvement-proposals/ensip-10-wildcard-resolution) are different from the original ENS subnode-based resolver, which relied on registering every subdomain on ENS's central subnode registry. With wildcard resolvers, the client is expected to recursively attempt to find a resolver for each level until it succeeds: First `foo.skyteller.eth`, if no resolver is registered then check `skyteller.eth`, if no resolver then fall back to the default `eth` resolver.
+Note: [Wildcard resolvers](https://docs.ens.domains/ens-improvement-proposals/ensip-10-wildcard-resolution) are different from the original ENS subnode-based resolver, which relied on registering every subdomain on ENS's central subnode registry. With wildcard resolvers, the client is expected to recursively attempt to find a resolver for each level until it succeeds: First `foo.example.eth`, if no resolver is registered then check `example.eth`, if no resolver then fall back to the default `eth` resolver.
 
 ### `src/extended/ManagedENSResolver.sol`
 

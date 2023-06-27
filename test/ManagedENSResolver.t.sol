@@ -17,11 +17,11 @@ contract ManagedENSResolverTest is Test {
         resolver = new ManagedENSResolver(
             registrar,
             registrar,
-            Helpers.namehash("skyteller", "eth"));
+            Helpers.namehash("example", "eth"));
     }
 
     function testResolve() public {
-        bytes32 name = Helpers.namehash("batman", "skyteller", "eth");
+        bytes32 name = Helpers.namehash("batman", "example", "eth");
         address addr = address(0x42);
 
         registrar.set(name, addr);

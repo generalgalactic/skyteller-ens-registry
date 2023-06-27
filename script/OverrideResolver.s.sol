@@ -20,20 +20,18 @@ contract Override is Script {
 
         ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
 
-        // Original owner:
-        // address owner = 0x4863A39d26F8b2e40d2AAbFf1eEe55E4B5015C4f;
-        bytes32 skytellerNode = 0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2;
-        address currentOwner = ens.owner(skytellerNode);
+        bytes32 exampleNode = 0x3d5d2e21162745e4df4f56471fd7f651f441adaaca25deb70e4738c6f63d1224;
+        address currentOwner = ens.owner(exampleNode);
 
         vm.startBroadcast(currentOwner);
 
         // Replace the resolver
-        ens.setResolver(skytellerNode, resolverAddress);
+        ens.setResolver(exampleNode, resolverAddress);
 
-        console.log("New resolver: %s", ens.resolver(skytellerNode));
+        console.log("New resolver: %s", ens.resolver(exampleNode));
 
         vm.stopBroadcast();
 
-        // $ cast call --rpc-url "http://127.0.0.1:8545" 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e "resolver(bytes32) returns (address)" "0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2"
+        // $ cast call --rpc-url "http://127.0.0.1:8545" 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e "resolver(bytes32) returns (address)" "0x3d5d2e21162745e4df4f56471fd7f651f441adaaca25deb70e4738c6f63d1224"
     }
 }

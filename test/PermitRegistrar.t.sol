@@ -18,13 +18,13 @@ contract PermitRegistrarTest is Test {
         signer = vm.addr(signerKey);
 
         registrar = new PermitRegistrarWithReverse(
-            Helpers.namehash("skyteller", "eth") // parentNode
+            Helpers.namehash("example", "eth") // parentNode
         );
         registrar.setAdminSigner(signer);
     }
 
     function test_RegisterWithPermit() public {
-        bytes32 node = Helpers.namehash("foo", "skyteller", "eth");
+        bytes32 node = Helpers.namehash("foo", "example", "eth");
 
         string memory name = "foo";
         address caller = address(0x42);

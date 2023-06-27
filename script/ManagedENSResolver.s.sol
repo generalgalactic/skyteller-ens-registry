@@ -19,10 +19,10 @@ contract Deploy is Script {
         new ManagedENSResolver(
             registrar, // IRegistrar
             registrar, // INameResolver
-            Helpers.namehash("skyteller", "eth") // parentNode
+            Helpers.namehash("example", "eth") // parentNode
         );
 
-        bytes32 ownerNode = Helpers.namehash("owner", "skyteller", "eth");
+        bytes32 ownerNode = Helpers.namehash("owner", "example", "eth");
         registrar.set(ownerNode, ownerAddress);
 
         if (ownerAddress != address(0)) {

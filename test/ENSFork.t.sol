@@ -29,7 +29,7 @@ contract ENSForkTest is Test {
         resolver = new ManagedENSResolver(
             registrar,
             registrar,
-            Helpers.namehash("skyteller", "eth"));
+            Helpers.namehash("example", "eth"));
 
         registrar.setAdminSetter(address(resolver));
     }
@@ -37,23 +37,23 @@ contract ENSForkTest is Test {
     // TODO: Could also mock ENS altogether using https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md#appendix-a-registry-implementation
 
     function testEndToEnd() public {
-        bytes32 skytellerNode = Helpers.namehash("skyteller", "eth");
+        bytes32 exampleNode = Helpers.namehash("example", "eth");
 
         ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
-        address currentOwner = ens.owner(skytellerNode);
+        address currentOwner = ens.owner(exampleNode);
 
         // Impersonate currentOwner to change the resolver/owner
         vm.startBroadcast(currentOwner);
 
         // Replace the resolver
-        ens.setResolver(skytellerNode, address(resolver));
-        ens.setOwner(skytellerNode, address(resolver));
+        ens.setResolver(exampleNode, address(resolver));
+        ens.setOwner(exampleNode, address(resolver));
 
         vm.stopBroadcast();
 
-        assertEq(ens.owner(skytellerNode), address(resolver));
+        assertEq(ens.owner(exampleNode), address(resolver));
 
-        bytes32 name = Helpers.namehash("batman", "skyteller", "eth");
+        bytes32 name = Helpers.namehash("batman", "example", "eth");
         bytes32 subdomain = keccak256("batman");
         address addr = address(0x42);
 

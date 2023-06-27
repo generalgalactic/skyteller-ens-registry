@@ -16,20 +16,20 @@ contract HelpersTest is Test {
         }
 
         {
-            bytes32 got = Helpers.namehash("skyteller", "eth");
-            bytes32 want = 0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2;
+            bytes32 got = Helpers.namehash("example", "eth");
+            bytes32 want = 0x3d5d2e21162745e4df4f56471fd7f651f441adaaca25deb70e4738c6f63d1224;
             assertEq(got, want);
             // Can confirm in terminal:
-            // $ cast namehash skyteller.eth
-            // 0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2
-            // $ cast call --flashbots 0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41 "addr(bytes32) returns (address)" "0x32e875667cb1f7a08d7df7a538d8cbab9c4aeecd1856824909c6dae63dfc03f2"
-            // 0x7c543D205ef669eF43f5Ae095B4d70125b90893b
+            // $ cast namehash example.eth
+            // 0x3d5d2e21162745e4df4f56471fd7f651f441adaaca25deb70e4738c6f63d1224
+            // $ cast call --flashbots 0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41 "addr(bytes32) returns (address)" "0x3d5d2e21162745e4df4f56471fd7f651f441adaaca25deb70e4738c6f63d1224"
+            // 0x51ABa267A6e8e1E76B44183a73E881D73A102F26
         }
 
         {
-            // $ cast namehash batman.skyteller.eth
-            bytes32 got = Helpers.namehash("batman", "skyteller", "eth");
-            bytes32 want = 0x4930afdb2361eb3ba4e29c1a2e843807e48eaa57987ec4df35ff8d9f1949aa60;
+            // $ cast namehash batman.example.eth
+            bytes32 got = Helpers.namehash("batman", "example", "eth");
+            bytes32 want = 0x442674c8302a725b9d1969ae2a0e5c2364b684e84ad3ee8682b7ac82cd0c58e2;
             assertEq(got, want);
         }
     }
